@@ -1,4 +1,5 @@
 using customserilog.enrichers;
+using customserilog.enrichers.Middleware;
 using customserilog.enrichers.TraceIdentifier;
 using Microsoft.AspNetCore.HttpLogging;
 using Serilog;
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.UseSerilog((b, loggerConfiguration) =>
 {
     loggerConfiguration
+        .MinimumLevel.Information()
         //.Enrich.With<AspnetcoreHttpcontextEnricher>()
         .Enrich.With<TraceIdentifierEnricher>()
         //.Enrich.With<HeaderItemEnricher>()
@@ -23,13 +25,13 @@ builder.UseSerilog((b, loggerConfiguration) =>
 //     .WriteTo.Seq("http://localhost:5341")
 //     .CreateLogger();
 
-builder.Services.AddHttpLogging(options =>
-{
-    options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders | HttpLoggingFields.ResponseBody;
-    //options.LoggingFields = HttpLoggingFields.All;
-    options.RequestHeaders.Add("Username");
-    options.RequestHeaders.Add("version");
-});
+// builder.Services.AddHttpLogging(options =>
+// {
+//     options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders | HttpLoggingFields.ResponseBody;
+//     //options.LoggingFields = HttpLoggingFields.All;
+//     options.RequestHeaders.Add("Username");
+//     options.RequestHeaders.Add("version");
+// });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -45,8 +47,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<RequestLoggingMiddleware>();
 
-app.UseHttpLogging();
+//app.UseHttpLogging();
 
 app.UseHttpsRedirection();
 

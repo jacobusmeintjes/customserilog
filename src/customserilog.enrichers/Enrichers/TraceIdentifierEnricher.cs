@@ -29,7 +29,6 @@ public class TraceIdentifierEnricher
     {
         if (_contextAccessor.HttpContext == null) return;
 
-
         var property = propertyFactory.CreateProperty(TraceIdentifierPropertyName,
             _contextAccessor.HttpContext.TraceIdentifier);
         logEvent.AddOrUpdateProperty(property);
