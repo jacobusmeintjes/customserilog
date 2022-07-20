@@ -27,25 +27,11 @@ public class TraceIdentifierEnricher
     /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        if (_contextAccessor.HttpContext is not null)
-        {
-            var property = propertyFactory.CreateProperty(TraceIdentifierPropertyName,
-                _contextAccessor.HttpContext.TraceIdentifier);
-            logEvent.AddOrUpdateProperty(property);
+        if (_contextAccessor.HttpContext == null) return;
 
-            foreach (var param in _contextAccessor.HttpContext.Request.Query)
-            {
-                property = propertyFactory.CreateProperty($"query.{param.Key}",
-                    param.Value.ToString());
-                logEvent.AddOrUpdateProperty(property);
-            }
 
-            foreach (var header in _contextAccessor.HttpContext.Request.Headers)
-            {
-                property = propertyFactory.CreateProperty($"header.{header.Key}",
-                    header.Value.ToString());
-                logEvent.AddOrUpdateProperty(property);
-            }
-        }
+        var property = propertyFactory.CreateProperty(TraceIdentifierPropertyName,
+            _contextAccessor.HttpContext.TraceIdentifier);
+        logEvent.AddOrUpdateProperty(property);
     }
 }
