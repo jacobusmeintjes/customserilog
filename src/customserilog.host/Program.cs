@@ -1,5 +1,6 @@
 using customserilog.enrichers;
 using customserilog.enrichers.TraceIdentifier;
+using Microsoft.AspNetCore.HttpLogging;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.UseSerilog((b, loggerConfiguration) =>
     loggerConfiguration
         //.Enrich.With<AspnetcoreHttpcontextEnricher>()
         .Enrich.With<TraceIdentifierEnricher>()
+        //.Enrich.With<HeaderItemEnricher>()
+        //.Enrich.With<QueryParameterEnricher>()
         .WriteTo.Console()
         .WriteTo.Seq("http://localhost:5341");
 });
@@ -20,11 +23,19 @@ builder.UseSerilog((b, loggerConfiguration) =>
 //     .WriteTo.Seq("http://localhost:5341")
 //     .CreateLogger();
 
+builder.Services.AddHttpLogging(options =>
+{
+    options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders | HttpLoggingFields.ResponseBody;
+    //options.LoggingFields = HttpLoggingFields.All;
+    options.RequestHeaders.Add("Username");
+    options.RequestHeaders.Add("version");
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -34,6 +45,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHttpLogging();
 
 app.UseHttpsRedirection();
 
