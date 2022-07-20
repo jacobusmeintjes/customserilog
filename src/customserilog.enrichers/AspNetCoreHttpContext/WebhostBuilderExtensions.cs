@@ -16,7 +16,7 @@ public static class WebhostBuilderExtensions
     {
         builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-        builder.Services.TryAddSingleton<IAspnetcoreHttpcontextEnricher, AspnetcoreHttpcontextEnricher>();
+        //builder.Services.TryAddSingleton<IAspnetcoreHttpcontextEnricher, AspnetcoreHttpcontextEnricher>();
 
         builder.Logging.ClearProviders();
         var loggerConfiguration = new LoggerConfiguration();

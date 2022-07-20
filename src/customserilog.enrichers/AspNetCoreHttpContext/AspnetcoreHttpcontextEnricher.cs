@@ -68,7 +68,7 @@ public class AspnetcoreHttpcontextEnricher : IAspnetcoreHttpcontextEnricher
             ctx.Request.EnableBuffering();    //add this..
             using (StreamReader reader = new StreamReader(ctx.Request.Body, Encoding.UTF8, true, 1024, true))
             {
-                httpContextCache.Body = reader.ReadToEnd();
+                httpContextCache.Body = reader.ReadToEndAsync().GetAwaiter().GetResult();
             }
 
             ctx.Request.Body.Position = 0;

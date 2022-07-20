@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.UseSerilog((b, loggerConfiguration) =>
 {
     loggerConfiguration
-        .Enrich.With<AspnetcoreHttpcontextEnricher>()
+        //.Enrich.With<AspnetcoreHttpcontextEnricher>()
         .Enrich.With<TraceIdentifierEnricher>()
         .WriteTo.Console()
         .WriteTo.Seq("http://localhost:5341");
